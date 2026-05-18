@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 
 import { connectToDb } from "@/lib/mongoose";
 import { samharaSubmissionSchema } from "@/lib/samharaForm";
+import { sendSamharaSubmissionNotificationEmail } from "@/lib/ses";
 import { RazorpayPaymentLog } from "@/models/RazorpayPaymentLog";
 import { SamharaSubmission } from "@/models/SamharaSubmission";
 
@@ -40,6 +41,15 @@ export async function POST(req: Request) {
           },
         }
       );
+    }
+
+    try {
+      await sendSamharaSubmissionNotificationEmail(
+        parsed.data,
+        String(doc._id)
+      );
+    } catch (emailErr) {
+      console.error("[samharasubmission] SES notification failed:", emailErr);
     }
 
     return NextResponse.json({ ok: true, id: String(doc._id) });

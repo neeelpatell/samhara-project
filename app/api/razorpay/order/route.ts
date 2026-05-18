@@ -3,8 +3,8 @@ import Razorpay from "razorpay";
 import { z } from "zod";
 
 import {
-  getAmountForPackageOptionInr,
-  packageOptions,
+  getSelectablePackageOptions,
+  resolvePaymentAmountInr,
   zMobile10Digits,
 } from "@/lib/samharaForm";
 import { connectToDb } from "@/lib/mongoose";
@@ -13,7 +13,12 @@ import { RazorpayPaymentLog } from "@/models/RazorpayPaymentLog";
 import { SamharaSubmission } from "@/models/SamharaSubmission";
 
 const reqSchema = z.object({
-  packageOption: z.enum(packageOptions),
+  packageOption: z
+    .string()
+    .trim()
+    .refine((v) => getSelectablePackageOptions().includes(v), {
+      message: "Select a valid package option",
+    }),
   name: z.string().trim().min(1),
   email: z.string().trim().email(),
   contact: zMobile10Digits,
@@ -174,8 +179,8 @@ export async function POST(req: Request) {
       );
     }
 
-    const amountInr = getAmountForPackageOptionInr(parsedBody.packageOption);
-    const amountPaise = amountInr * 100;
+    const amountInr = resolvePaymentAmountInr(parsedBody.packageOption);
+    const amountPaise = Math.round(amountInr * 100);
 
     const razorpay = new Razorpay({
       key_id: keyId,
@@ -225,7 +230,7 @@ export async function POST(req: Request) {
 
     const amountInr =
       parsedBody != null
-        ? getAmountForPackageOptionInr(parsedBody.packageOption)
+        ? resolvePaymentAmountInr(parsedBody.packageOption)
         : undefined;
     await safeLog({
       status: "order_create_failed",

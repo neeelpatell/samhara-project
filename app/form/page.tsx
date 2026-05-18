@@ -22,7 +22,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import Logo from "../../assets/logo2026.png";
 import {
-  getAmountForPackageOptionInr,
+  getSelectablePackageOptions,
+  isTestPackageOption,
+  minPaymentAmountInr,
+  resolvePaymentAmountInr,
   isCompanyPaymentPackage,
   isDoubleOccupancyPackage,
   isPersonalPaymentPackage,
@@ -176,7 +179,7 @@ export default function FormPage() {
       payment?.paymentId?.trim() &&
       payment?.signature?.trim() &&
       typeof payment.amountInr === "number" &&
-      payment.amountInr >= 1
+      payment.amountInr >= minPaymentAmountInr()
   );
 
   useEffect(() => {
@@ -256,7 +259,7 @@ export default function FormPage() {
 
   const amountInr = useMemo(() => {
     if (!packageOption) return null;
-    return getAmountForPackageOptionInr(packageOption as never);
+    return resolvePaymentAmountInr(packageOption as never);
   }, [packageOption]);
 
   const onSubmit = async (values: SamharaSubmissionInput) => {
@@ -832,10 +835,12 @@ export default function FormPage() {
                       {...field}
                       size="large"
                       placeholder="Choose"
-                      options={packageOptions.map((o) => ({
+                      options={getSelectablePackageOptions().map((o) => ({
                         label: o,
                         value: o,
-                        disabled: isSingleOccupancyPackage(o),
+                        disabled:
+                          isSingleOccupancyPackage(o) &&
+                          !isTestPackageOption(o),
                       }))}
                     />
                   )}

@@ -35,6 +35,41 @@ export const packageOptions = [
   "Double Occupancy – Personal Payment (Per Person) – (Rs. 65,000 + GST) = ₹73,287 (Includes 2.5% Convenience Fee)",
 ] as const;
 
+/** Razorpay minimum order amount for INR (100 paise). */
+export const RAZORPAY_MIN_ORDER_INR = 1;
+
+/** Shown in the package dropdown when test mode is enabled (see `isTestPackageOptionEnabled`). */
+export const testPackageOption =
+  "Test payment – ₹1 (email & payment testing only)" as const;
+
+export const TEST_PACKAGE_AMOUNT_INR = RAZORPAY_MIN_ORDER_INR;
+
+export function clampToRazorpayMinimumInr(amountInr: number): number {
+  return Math.max(amountInr, RAZORPAY_MIN_ORDER_INR);
+}
+
+export function isTestPackageOption(
+  packageOption: string | undefined | null
+): boolean {
+  return packageOption?.trim() === testPackageOption;
+}
+
+export function isTestPackageOptionEnabled(): boolean {
+  if (process.env.SAMHARA_ENABLE_TEST_PACKAGE === "true") return true;
+  if (process.env.NEXT_PUBLIC_SAMHARA_ENABLE_TEST_PACKAGE === "true") {
+    return true;
+  }
+  return getTestPaymentAmountInr() != null;
+}
+
+export function getSelectablePackageOptions(): string[] {
+  const options: string[] = [...packageOptions];
+  if (isTestPackageOptionEnabled()) {
+    options.push(testPackageOption);
+  }
+  return options;
+}
+
 /** Roommate list applies only for double-occupancy packages. */
 export function isDoubleOccupancyPackage(
   packageOption: string | undefined | null
@@ -85,10 +120,35 @@ const packageAmountInr: Record<(typeof packageOptions)[number], number> = {
     73287,
 };
 
-export function getAmountForPackageOptionInr(
-  opt: (typeof packageOptions)[number]
-): number {
-  return packageAmountInr[opt];
+export function getAmountForPackageOptionInr(opt: string): number {
+  if (isTestPackageOption(opt)) return TEST_PACKAGE_AMOUNT_INR;
+  if (opt in packageAmountInr) {
+    return packageAmountInr[opt as (typeof packageOptions)[number]];
+  }
+  throw new Error(`Unknown package option: ${opt}`);
+}
+
+/** When `SAMHARA_TEST_PAYMENT_INR` (or `NEXT_PUBLIC_*`) is set, all charges use that amount (min ₹1). */
+export function getTestPaymentAmountInr(): number | null {
+  const raw =
+    process.env.SAMHARA_TEST_PAYMENT_INR ??
+    process.env.NEXT_PUBLIC_SAMHARA_TEST_PAYMENT_INR;
+  if (raw == null || !String(raw).trim()) return null;
+  const n = Number(raw);
+  if (!Number.isFinite(n) || n <= 0) return null;
+  return clampToRazorpayMinimumInr(n);
+}
+
+export function resolvePaymentAmountInr(opt: string): number {
+  if (isTestPackageOption(opt)) return TEST_PACKAGE_AMOUNT_INR;
+  const testOverride = getTestPaymentAmountInr();
+  if (testOverride != null) return testOverride;
+  return getAmountForPackageOptionInr(opt);
+}
+
+export function minPaymentAmountInr(): number {
+  const test = getTestPaymentAmountInr();
+  return test ?? RAZORPAY_MIN_ORDER_INR;
 }
 
 const mobile10Message =
@@ -174,6 +234,18 @@ export const samharaSubmissionSchema = z
     }
   })
   .superRefine((val, ctx) => {
+    const allowed = getSelectablePackageOptions();
+    if (!allowed.includes(val.packageOption.trim())) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["packageOption"],
+        message: "Select a valid package option",
+      });
+    }
+  })
+  .superRefine((val, ctx) => {
+    if (isTestPackageOption(val.packageOption)) return;
+
     const pan = (val.panCard ?? "").trim().toUpperCase();
     const gst = (val.gstNumber ?? "").trim().toUpperCase();
 
@@ -223,7 +295,7 @@ export const samharaSubmissionSchema = z
       (p.signature?.trim().length ?? 0) > 0 &&
       typeof p.amountInr === "number" &&
       Number.isFinite(p.amountInr) &&
-      p.amountInr >= 1;
+      p.amountInr >= minPaymentAmountInr();
     if (!paid) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,

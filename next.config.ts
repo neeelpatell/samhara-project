@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 // Packages that must never be bundled into client or edge chunks.
 // Webpack/Turbopack both honor serverExternalPackages — without this,
 // CJS packages like razorpay fail at runtime when Next.js 16 bundles them.
-const serverOnlyPackages = ["mongoose", "razorpay"];
+const serverOnlyPackages = ["mongoose", "razorpay", "aws-sdk"];
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
