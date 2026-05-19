@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Samhara",
-  description: "Design smarter with AI that understands you.",
+  description: "Samhara 2026",
   icons: {
     icon: [{ url: "/image.png" }],
   },

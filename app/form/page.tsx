@@ -812,6 +812,177 @@ export default function FormPage() {
               </Form.Item>
             ) : null}
 
+            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold text-slate-900">
+                  Name of Your Point of Contact (PA/EA/Secretary)
+                </h2>
+                <p className="text-sm text-slate-600">
+                  They will be marked CC on all Communications along with you.
+                </p>
+              </div>
+              <Controller
+                control={control}
+                name="pocName"
+                render={({ field }) => (
+                  <Input {...field} placeholder="Your answer" size="large" />
+                )}
+              />
+            </div>
+
+            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold text-slate-900">
+                  Mobile No. Your Point of Contact (If any)
+                </h2>
+                <p className="text-sm text-slate-600">
+                  They will be marked CC on all Communications along with you.
+                </p>
+              </div>
+              <Form.Item
+                validateStatus={toItemStatus(errors.pocMobile?.message)}
+                help={errors.pocMobile?.message}
+              >
+                <Controller
+                  control={control}
+                  name="pocMobile"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      inputMode="numeric"
+                      placeholder="Your answer"
+                      size="large"
+                    />
+                  )}
+                />
+              </Form.Item>
+            </div>
+
+            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
+              <div className="space-y-1">
+                <h2 className="text-sm font-semibold text-slate-900">
+                  Email Id of Your Point of Contact (If any)
+                </h2>
+                <p className="text-sm text-slate-600">
+                  They will be marked CC on all Communications along with you.
+                </p>
+              </div>
+              <Form.Item
+                validateStatus={toItemStatus(errors.pocEmail?.message)}
+                help={errors.pocEmail?.message}
+              >
+                <Controller
+                  control={control}
+                  name="pocEmail"
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      type="email"
+                      placeholder="Your answer"
+                      size="large"
+                    />
+                  )}
+                />
+              </Form.Item>
+            </div>
+            <div className="mt-8 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm">
+              <div className="bg-violet-600 px-4 py-3 text-center text-sm font-semibold text-white sm:text-base">
+                Acceptance of TnC
+              </div>
+              <div className="space-y-3 p-5 sm:p-6">
+                <Typography.Paragraph style={{ marginBottom: 0 }}>
+                  By submitting the form you agree that you have read all the
+                  terms and conditions and accept the same.
+                </Typography.Paragraph>
+                <Typography.Text strong>
+                  I agree <span className="text-red-600">*</span>
+                </Typography.Text>
+                <div className="flex flex-col gap-0 [&_.ant-form-item]:!mb-1.5 [&_.ant-form-item-explain]:min-h-0">
+                  <Form.Item
+                    validateStatus={toItemStatus(
+                      errors.tncNonRefundable?.message
+                    )}
+                    help={errors.tncNonRefundable?.message}
+                    className="!mb-0"
+                  >
+                    <Controller
+                      control={control}
+                      name="tncNonRefundable"
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        >
+                          This is a Non Refundable amount
+                        </Checkbox>
+                      )}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    validateStatus={toItemStatus(
+                      errors.tncConfirmationAfterPayment?.message
+                    )}
+                    help={errors.tncConfirmationAfterPayment?.message}
+                    className="!mb-0"
+                  >
+                    <Controller
+                      control={control}
+                      name="tncConfirmationAfterPayment"
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        >
+                          I understand that confirmation will be only after
+                          making the payment
+                        </Checkbox>
+                      )}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    validateStatus={toItemStatus(
+                      errors.tncAirfareInsuranceExcluded?.message
+                    )}
+                    help={errors.tncAirfareInsuranceExcluded?.message}
+                    className="!mb-0"
+                  >
+                    <Controller
+                      control={control}
+                      name="tncAirfareInsuranceExcluded"
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        >
+                          I am aware that Airfare & Insurance are Excluded
+                        </Checkbox>
+                      )}
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    validateStatus={toItemStatus(
+                      errors.tncPaymentAgencyAccount?.message
+                    )}
+                    help={errors.tncPaymentAgencyAccount?.message}
+                    className="!mb-0"
+                  >
+                    <Controller
+                      control={control}
+                      name="tncPaymentAgencyAccount"
+                      render={({ field }) => (
+                        <Checkbox
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                        >
+                          I am aware that if the payment does not reflect in the
+                          agency account, my registration will not be complete
+                        </Checkbox>
+                      )}
+                    />
+                  </Form.Item>
+                </div>
+              </div>
+            </div>
             <div className="mt-10 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
               <div className="space-y-1">
                 <Typography.Text strong>
@@ -982,179 +1153,6 @@ export default function FormPage() {
                   )}
                 </div>
               </Form.Item>
-            </div>
-
-            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
-              <div className="space-y-1">
-                <h2 className="text-sm font-semibold text-slate-900">
-                  Name of Your Point of Contact (PA/EA/Secretary)
-                </h2>
-                <p className="text-sm text-slate-600">
-                  They will be marked CC on all Communications along with you.
-                </p>
-              </div>
-              <Controller
-                control={control}
-                name="pocName"
-                render={({ field }) => (
-                  <Input {...field} placeholder="Your answer" size="large" />
-                )}
-              />
-            </div>
-
-            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
-              <div className="space-y-1">
-                <h2 className="text-sm font-semibold text-slate-900">
-                  Mobile No. Your Point of Contact (If any)
-                </h2>
-                <p className="text-sm text-slate-600">
-                  They will be marked CC on all Communications along with you.
-                </p>
-              </div>
-              <Form.Item
-                validateStatus={toItemStatus(errors.pocMobile?.message)}
-                help={errors.pocMobile?.message}
-              >
-                <Controller
-                  control={control}
-                  name="pocMobile"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      inputMode="numeric"
-                      placeholder="Your answer"
-                      size="large"
-                    />
-                  )}
-                />
-              </Form.Item>
-            </div>
-
-            <div className="mt-8 space-y-5 rounded-2xl border border-black/5 bg-white p-5 shadow-sm sm:p-6">
-              <div className="space-y-1">
-                <h2 className="text-sm font-semibold text-slate-900">
-                  Email Id of Your Point of Contact (If any)
-                </h2>
-                <p className="text-sm text-slate-600">
-                  They will be marked CC on all Communications along with you.
-                </p>
-              </div>
-              <Form.Item
-                validateStatus={toItemStatus(errors.pocEmail?.message)}
-                help={errors.pocEmail?.message}
-              >
-                <Controller
-                  control={control}
-                  name="pocEmail"
-                  render={({ field }) => (
-                    <Input
-                      {...field}
-                      type="email"
-                      placeholder="Your answer"
-                      size="large"
-                    />
-                  )}
-                />
-              </Form.Item>
-            </div>
-
-            <div className="mt-8 overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm">
-              <div className="bg-violet-600 px-4 py-3 text-center text-sm font-semibold text-white sm:text-base">
-                Acceptance of TnC
-              </div>
-              <div className="space-y-3 p-5 sm:p-6">
-                <Typography.Paragraph style={{ marginBottom: 0 }}>
-                  By submitting the form you agree that you have read all the
-                  terms and conditions and accept the same.
-                </Typography.Paragraph>
-                <Typography.Text strong>
-                  I agree <span className="text-red-600">*</span>
-                </Typography.Text>
-                <div className="flex flex-col gap-0 [&_.ant-form-item]:!mb-1.5 [&_.ant-form-item-explain]:min-h-0">
-                  <Form.Item
-                    validateStatus={toItemStatus(
-                      errors.tncNonRefundable?.message
-                    )}
-                    help={errors.tncNonRefundable?.message}
-                    className="!mb-0"
-                  >
-                    <Controller
-                      control={control}
-                      name="tncNonRefundable"
-                      render={({ field }) => (
-                        <Checkbox
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        >
-                          This is a Non Refundable amount
-                        </Checkbox>
-                      )}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    validateStatus={toItemStatus(
-                      errors.tncConfirmationAfterPayment?.message
-                    )}
-                    help={errors.tncConfirmationAfterPayment?.message}
-                    className="!mb-0"
-                  >
-                    <Controller
-                      control={control}
-                      name="tncConfirmationAfterPayment"
-                      render={({ field }) => (
-                        <Checkbox
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        >
-                          I understand that confirmation will be only after
-                          making the payment
-                        </Checkbox>
-                      )}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    validateStatus={toItemStatus(
-                      errors.tncAirfareInsuranceExcluded?.message
-                    )}
-                    help={errors.tncAirfareInsuranceExcluded?.message}
-                    className="!mb-0"
-                  >
-                    <Controller
-                      control={control}
-                      name="tncAirfareInsuranceExcluded"
-                      render={({ field }) => (
-                        <Checkbox
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        >
-                          I am aware that Airfare & Insurance are Excluded
-                        </Checkbox>
-                      )}
-                    />
-                  </Form.Item>
-                  <Form.Item
-                    validateStatus={toItemStatus(
-                      errors.tncPaymentAgencyAccount?.message
-                    )}
-                    help={errors.tncPaymentAgencyAccount?.message}
-                    className="!mb-0"
-                  >
-                    <Controller
-                      control={control}
-                      name="tncPaymentAgencyAccount"
-                      render={({ field }) => (
-                        <Checkbox
-                          checked={field.value}
-                          onChange={(e) => field.onChange(e.target.checked)}
-                        >
-                          I am aware that if the payment does not reflect in the
-                          agency account, my registration will not be complete
-                        </Checkbox>
-                      )}
-                    />
-                  </Form.Item>
-                </div>
-              </div>
             </div>
 
             <div className="mt-10 flex flex-col-reverse items-stretch justify-between gap-3 sm:flex-row sm:items-center">
