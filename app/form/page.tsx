@@ -624,12 +624,14 @@ export default function FormPage() {
           <Link href="/" className="text-sm font-semibold text-slate-900">
             ← Back
           </Link>
-          <Image
-            src={Logo}
-            alt="Samhara"
-            priority
-            className="h-9 w-auto sm:h-10"
-          />
+          <Link href="/" className="flex items-center" aria-label="Samhara home">
+            <Image
+              src={Logo}
+              alt="Samhara logo"
+              priority
+              className="h-9 w-auto sm:h-10"
+            />
+          </Link>
           <div className="w-[72px] sm:w-20" aria-hidden />
         </div>
       </header>
@@ -1097,6 +1099,13 @@ export default function FormPage() {
                   />
                 </Form.Item>
               ) : null}
+
+              <Alert
+                type="info"
+                showIcon
+                className="!mb-0"
+                description="After payment, please make sure to submit the form; otherwise, your registration will not be submitted."
+              />
 
               <Form.Item
                 validateStatus={errors.payment ? "error" : undefined}

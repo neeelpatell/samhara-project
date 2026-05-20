@@ -21,7 +21,8 @@ export const metadata: Metadata = {
   title: "Samhara",
   description: "Samhara 2026",
   icons: {
-    icon: [{ url: "/image.png" }],
+    icon: [{ url: "/samhara-logo.png", type: "image/png" }],
+    apple: [{ url: "/samhara-logo.png", type: "image/png" }],
   },
 };
 
